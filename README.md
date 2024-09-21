@@ -5,6 +5,56 @@ Embedded Linux Development Links
 
 https://interface.cqpub.co.jp/linux-hands-on/
 
+## ハンズオン
+
+ハンズオンで参照、使用するリンクとコマンド集を示します。
+
+コマンドは必ず行頭に、入力対象のコマンドプロンプトがあるのでご注意ください。
+
+## システムの起動
+
+### ツールとファームウェアの入手
+
+- [Tera Term v5.3](https://github.com/TeraTermProject/teraterm/releases/tag/v5.3)
+
+  https://github.com/TeraTermProject/teraterm/releases/tag/v5.3
+
+- [UUU 1.5.21 (Universal Update Utility)](https://github.com/nxp-imx/mfgtools/releases/tag/uuu_1.5.21)
+  
+  https://github.com/nxp-imx/mfgtools/releases/tag/uuu_1.5.21
+
+
+- ファームウェア [Yocto Linux Full Image (wic)](https://avtinc.sharepoint.com/:u:/t/ET-Downloads/EX0ZecM2petAnDaj2Ky3d7MByKoB55fRASdztgjpTxtYuw)
+
+  https://avtinc.sharepoint.com/:u:/t/ET-Downloads/EX0ZecM2petAnDaj2Ky3d7MByKoB55fRASdztgjpTxtYuw
+
+- ファームウェア [BootLoader u-boot Image](https://avtinc.sharepoint.com/:u:/t/ET-Downloads/ES_q6BqSIV9JssbRsO5n-2UB2AtMwp3Ygkjp0Viu5iUrow)
+
+  https://avtinc.sharepoint.com/:u:/t/ET-Downloads/ES_q6BqSIV9JssbRsO5n-2UB2AtMwp3Ygkjp0Viu5iUrow
+
+### ファームウェア書き込み (UUU)
+
+コマンドプロンプトを起動して、UUUコマンドでファームウェアを書きこみます。
+```cmd
+> uuu -b emmc_all u-boot-maaxboard-8ulp.bin avnet-image-full-maaxboard-8ulp.wic
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+■■■■■
+
 ### 参考資料
 
 - [GitHub MaaXBoard-8ULP-HUB](https://github.com/Avnet/MaaXBoard-8ULP-HUB)
@@ -23,7 +73,22 @@ https://interface.cqpub.co.jp/linux-hands-on/
 
   https://www.avnet.com/wps/wcm/connect/onesite/60e2bb73-e479-4f76-821f-0b811ae52643/MaaXBoard-8ULP-User-Guide-v1.0.pdf?MOD=AJPERES
 
+- uuu (Universal Update Utility), mfgtools 3.0(https://github.com/nxp-imx/mfgtools)
+
+  https://github.com/nxp-imx/mfgtools
+
+
+Maaxboard-8ulp 用ファームウェア (Yocto Linux Full Image)
+Maaxboard-8ulp 用ファームウェア (BootLoader u-boot Image)
+
+
+
+
 ### ハンズオン環境
+
+- [Tera Term (Ver 5.3)](https://github.com/TeraTermProject/teraterm/releases/tag/v5.3)
+
+  https://github.com/TeraTermProject/teraterm/releases/tag/v5.3
 
 - [ハンズオン環境インストール](https://github.com/ahidaka/InstallingWSLEmbeddedLinux)
 
