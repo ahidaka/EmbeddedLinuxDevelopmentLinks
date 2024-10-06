@@ -3,11 +3,47 @@ Embedded Linux Development Links
 
 ## [～i.MX8で学ぶ～ 組み込みLinuxハンズオン・セミナ](https://interface.cqpub.co.jp/linux-hands-on/) 参加者向けリンク集
 
+**2024年10月7日更新（テキスト修正内容追加）**
+
 https://interface.cqpub.co.jp/linux-hands-on/
 
 この文書のページ： **https://ahidaka.github.io/EmbeddedLinuxDevelopmentLinks/**
 
 ソースコード： https://github.com/ahidaka/EmbeddedLinuxDevelopmentLinks
+
+## テキスト修正
+
+先日は、**～i.MX8で学ぶ～組み込みLinuxハンズオン・セミナ テーマ** ②：Linuxデバイス・ドライバ開発入門 にご参加頂きまして、ありがとうございます。テキストの追加・修正をここの場で公開します。
+
+### 修正追加内容一覧
+
+1. ファームウェア書き込み時のケーブル接続
+2. ファームウェア書き込み時の u-bootファイル名
+3. レシピファイル作成時の抜けと手順の追加・整理
+4. bitbake 再実行時のキャッシュクリア手順
+
+#### ファームウェア書き込み時のケーブル接続
+
+ハンズオン中にお知らせした様に、配布テキスト 6ページ のケーブル接続指示が間違っています。正しくは次の通りです。
+
+1.3.4. ファームウェア書き込み（UUU）実行までは、コンソール用USBケーブル (USB Console)は接続しません。最初は、電源用USBケーブル（USB Power）だけの接続として下さい。
+
+そして 1.3.6. ジャンパ設定(Boot Mode)後は、コンソール用USBケーブル (USB Console)と、電源用USBケーブル（USB Power）の両方を接続して下さい。
+
+#### ファームウェア書き込み時の u-bootファイル名
+
+配布テキスト 5ページほか数か所の、UUUコマンドで書き込む u-boot ファイル名が間違っています。正しくは、u-boot-maaxboard-8ulp.**imx** です。以降のこのリンク集の基準も全て修正しました。
+
+#### レシピファイル作成時の抜けと手順の追加・整理
+
+配布テキスト 22ページ 3.3.1.1. レシピファイルのコピーと編集 に編集内容の抜けがありました。
+正しくは本リンク集の該当項目に、追加情報とともに整理して記載しています。
+
+#### bitbake 再実行時のキャッシュクリア手順
+
+前項に関連して、追加レシピの内容や追加ファイルの内容に誤りがあった場合は、再度 bitbake し直してもデータがキャッシュされているため、作成されるイメージが変更されないことを確認しています。
+
+この問題に対応するために、再度 bitbake する際に、古いキャッシュをクリアしてから bitbake を実行する手順を本リンク集の最後に追加して説明しています。
 
 ## ハンズオン
 
@@ -63,9 +99,9 @@ $ sudo shutdown -h now
 
 ### ファームウェア書き込み (UUU)
 
-コマンドプロンプトを起動して、UUUコマンドでファームウェアを書きこみます。
+電源側USBケーブルだけを接続した状態（コンソールUSBは取り外し）で、コマンドプロンプトを起動して、UUUコマンドでファームウェアを書きこみます。
 ```cmd
-> uuu -b emmc_all u-boot-maaxboard-8ulp.bin avnet-image-full-maaxboard-8ulp.wic
+> uuu -b emmc_all u-boot-maaxboard-8ulp.imx avnet-image-full-maaxboard-8ulp.wic
 ```
 
 #### ssh からのログイン
@@ -477,7 +513,10 @@ $ mkdir files
 $ cp ~/imx-yocto-bsp/sources/poky/meta-skeleton/recipes-kernel/hello-mod/hello-mod_0.1.bb greeting_0.1.bb
 ```
 
-エディタで編集。
+エディタで編集します。
+
+**テキスト22ページ 3.3.1.1. レシピファイルのコピーと編集** に編集内容の抜けがありましたので、修正掲載します。
+以下の部分、最後の **kernel-module-greeting** の行の修正が抜けていました。
 
 ```
 前略
@@ -489,17 +528,24 @@ inherit module
 SRC_URI = "file://Makefile \
            file://greeting.c \
           "
-後略
+
+S = "${WORKDIR}"
+
+# The inherit of module.bbclass will automatically name module packages with
+# "kernel-module-" prefix as required by the oe-core build environment.
+
+RPROVIDES:${PN} += "kernel-module-greeting"
 ```
 
-greeting.c ソースコードを取得の場合。
+#### 参考：greeting.c ソースをGitHubから取得する場合
+
+以下の clone コマンドで取得します。Copilotで作成して動作確認済の場合は不要です。
 
 ```sh
 $ cd
 $ git clone https://github.com/ahidaka/GreetingLinuxDriver.git
 ```
-
-greetingLinuxDriver のリポジトリ：https://github.com/ahidaka/GreetingLinuxDriver
+cp コマンドで greeting.c ソースコードだけをコピーします。
 
 ```sh
 cd ~/imx-yocto-bsp/maaxboard-8ulp/build
@@ -595,32 +641,69 @@ cp ~/imx-yocto-bsp/maaxboard-8ulp/build/tmp/deploy/images/maaxboard-8ulp/core-im
 
 ■ ファームウェア書き込み
 
-Maaxboard の電源を入れてファームウェアをMaaxboard に書き込み。
+電源切断後、ジャンパピンを設定し直して、**USB電源ケーブルだけの接続** としてMaaxboard の電源を入れてファームウェアをMaaxboard に書き込みます。
 
 ```cmd
-> uuu -b emmc_all u-boot-maaxboard-8ulp.bin avnet-image-full-maaxboard-8ulp.wic
+> uuu -b emmc_all u-boot-maaxboard-8ulp.imx avnet-image-full-maaxboard-8ulp.wic
 ```
 
-■ 同様確認
+■ 動作確認
+
+Maaxboard にファームウェア書き込み完了後は、ジャンパピンを設定し直して、USB電源ケーブルだけとシリアルコンソールケーブルの両方を接続して電源を入れて、動作確認します。
+
+ハンズオン時間の都合上、小規模ルートファルシステムの core-image-minimal レシピで bitbake したため、Maaxboard では sshdが動作しない点に注意してください。
 
 ```sh
 # depmod -a
 # modprove greeting
 ```
 
-### 
+シリアルコンソールで、以下のメッセージ出力を確認します。
 
-追加するレシピ名は receive-udp として、meta-receive-udp を作成、追加。
+```
+greeting: loading out-of-tree module taints kernel.
+Greetings! debug=0
+```
+
+greeting.ko は次の場所にインストールされています。
+
+```
+/lib/modules/6.1.22+g78ce688d5a79/extra/greeting.ko
+```
+
+
+### 追加の課題
+
+時間がある方は、同様に追加するレシピ名を receive-udp として、meta-receive-udp を作成、追加して動作確認します。
 
 ```sh
 $ bitbake-layers create-layer meta-receive-udp
 $ bitbake-layers add-layer meta-receive-udp
 ```
-ビルドコマンド。
+bitbake コマンド。
 
 ```sh
 $ bitbake core-image-minimal
 ```
+
+### bitbake 再実行時のキャッシュクリア
+
+追加レシピの内容や追加ファイルの内容に誤りがあった場合は、再度 bitbake し直してもデータがキャッシュされているため、作成されるイメージが変更されません。この問題に対応するために、再度 bitbake する際に、古いキャッシュをクリアする方法を説明します。
+
+キャッシュクリアは、bitbake 対象の該当レシピの最小のもので実行します。例えば今回のハンズオンで、bitbake core-image-minimal を再度実行する場合でも、その前に動作確認として実行した、テキスト23ページ 3.3.3. 単一レシピだけのbitbakeからやり直します。その際にキャッシュをクリアするための
+
+```sh
+$ bitbake -c cleansstate greeting
+```
+と **-c cleansstate** オプションを付けて bitbake を実行します。
+
+core-image-minimal を再実行する場合は、続いて、
+
+```sh
+$ bitbake core-image-minimal
+```
+
+レシピの内容やレシピに含まれるファイルを修正、変更した場合は、この様にして何回でもレシピの内容を修正しながら、bitbake を試すことが可能です。
 
 ### 参考資料
 
