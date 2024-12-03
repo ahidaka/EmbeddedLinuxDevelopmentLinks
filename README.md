@@ -67,7 +67,7 @@ $ sudo shutdown -h now
 
 電源側USBケーブルだけを接続した状態（コンソールUSBは取り外し）で、コマンドプロンプトを起動して、UUUコマンドでファームウェアを書きこみます。
 ```cmd
-> uuu -b emmc_all u-boot-maaxboard-8ulp.imx avnet-image-full-maaxboard-8ulp.imx
+> uuu -b emmc_all u-boot-maaxboard-8ulp.imx avnet-image-full-maaxboard-8ulp.wic
 ```
 
 #### ssh からのログイン
@@ -316,7 +316,6 @@ $ rsync -e ssh -a  sysfs_led_tesl.ko root@192.168.51.154:
 #### 実行（Maaxboard）
 
 SYSFSパラメータにパターンを出力して確認。
-**テキストファイル中に/sys/modules/...** とあるのは、**/sys/module** の間違いです。
 
 ```sh
 # echo 1 > /sys/module/sysfs_led_test/parameters/pattern
@@ -358,7 +357,6 @@ Maaxboardでロード。
 #### 送受信とも Maaxboard：実行（Maaxboard）
 
 SYSFSのdataパラメータを使用して、データ送信後、次に受信。
-**テキストファイル中に/sys/modules/...** とあるのは、**/sys/module** の間違いです。
 
 ```sh
 # echo "This is test send data." > /sys/module/send_udp/parameters/data
